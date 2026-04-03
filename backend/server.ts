@@ -7,12 +7,12 @@ import facultyRoutes from './routes/facultyRoutes.ts';
 import departmentRoutes from './routes/departmentRoutes.ts';
 import statsRoutes from './routes/statsRoutes.ts';
 
-// Initialize Database
-initDB();
-
 async function startServer() {
+  // Initialize Database
+  await initDB();
+
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT || 3000;
 
   app.use(cors());
   app.use(express.json());
@@ -42,7 +42,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  app.listen(PORT, () => {
     console.log(`🚀 Hackathon Server running at http://localhost:${PORT}`);
   });
 }

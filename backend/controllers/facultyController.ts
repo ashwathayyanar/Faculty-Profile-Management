@@ -1,4 +1,4 @@
-import db from '../config/db.ts';
+import pool from '../config/db.ts';
 import { Request, Response } from 'express';
 
 /**
@@ -6,7 +6,7 @@ import { Request, Response } from 'express';
  */
 
 // 1. Fetch all faculty with Department Names (SQL JOIN)
-export const getAllFaculty = (req: Request, res: Response) => {
+export const getAllFaculty = async (req: Request, res: Response) => {
   try {
     const { deptId } = req.query;
     
@@ -19,21 +19,21 @@ export const getAllFaculty = (req: Request, res: Response) => {
     const params: any[] = [];
     
     if (deptId) {
-      query += ' WHERE f.DepartmentID = ?';
       params.push(deptId);
+      query += ` WHERE f.DepartmentID = $${params.length}`;
     }
     
     query += ' ORDER BY f.LastName ASC';
     
-    const faculty = db.prepare(query).all(...params);
-    res.json(faculty);
+    const result = await pool.query(query, params);
+    res.json(result.rows);
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to fetch faculty', details: error.message });
   }
 };
 
 // 2. Add a new faculty member with robust error handling
-export const addFaculty = (req: Request, res: Response) => {
+export const addFaculty = async (req: Request, res: Response) => {
   const { FirstName, LastName, Email, Designation, DepartmentID, HireDate } = req.body;
 
   // Basic Validation
@@ -42,20 +42,21 @@ export const addFaculty = (req: Request, res: Response) => {
   }
 
   try {
-    const insert = db.prepare(`
+    const query = `
       INSERT INTO Faculty (FirstName, LastName, Email, Designation, DepartmentID, HireDate)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `);
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING FacultyID
+    `;
     
-    const result = insert.run(FirstName, LastName, Email, Designation, DepartmentID, HireDate);
+    const result = await pool.query(query, [FirstName, LastName, Email, Designation, DepartmentID, HireDate]);
     
     res.status(201).json({ 
       message: 'Faculty member added successfully', 
-      id: result.lastInsertRowid 
+      id: result.rows[0].facultyid 
     });
   } catch (error: any) {
-    // Handle Duplicate Email Error (SQLite error code for unique constraint)
-    if (error.message.includes('UNIQUE constraint failed: Faculty.Email')) {
+    // Handle Duplicate Email Error (Postgres error code for unique constraint is 23505)
+    if (error.code === '23505') {
       return res.status(409).json({ error: 'A faculty member with this email already exists' });
     }
     
@@ -64,35 +65,35 @@ export const addFaculty = (req: Request, res: Response) => {
 };
 
 // 3. Get faculty by ID (useful for profile views)
-export const getFacultyById = (req: Request, res: Response) => {
+export const getFacultyById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const faculty = db.prepare(`
+    const facultyResult = await pool.query(`
       SELECT f.*, d.DepartmentName 
       FROM Faculty f
       LEFT JOIN Departments d ON f.DepartmentID = d.DepartmentID
-      WHERE f.FacultyID = ?
-    `).get(id);
+      WHERE f.FacultyID = $1
+    `, [id]);
 
-    if (!faculty) {
+    if (facultyResult.rows.length === 0) {
       return res.status(404).json({ error: 'Faculty member not found' });
     }
 
-    const publications = db.prepare('SELECT * FROM Publications WHERE FacultyID = ?').all(id);
+    const publicationsResult = await pool.query('SELECT * FROM Publications WHERE FacultyID = $1', [id]);
     
-    res.json({ ...faculty, publications });
+    res.json({ ...facultyResult.rows[0], publications: publicationsResult.rows });
   } catch (error: any) {
     res.status(500).json({ error: 'Database error', details: error.message });
   }
 };
 
 // 4. Delete faculty member
-export const deleteFaculty = (req: Request, res: Response) => {
+export const deleteFaculty = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const result = db.prepare('DELETE FROM Faculty WHERE FacultyID = ?').run(id);
+    const result = await pool.query('DELETE FROM Faculty WHERE FacultyID = $1', [id]);
     
-    if (result.changes === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Faculty member not found' });
     }
     
@@ -103,7 +104,7 @@ export const deleteFaculty = (req: Request, res: Response) => {
 };
 
 // 5. Update faculty member
-export const updateFaculty = (req: Request, res: Response) => {
+export const updateFaculty = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { FirstName, LastName, Email, Designation, DepartmentID, HireDate } = req.body;
 
@@ -112,21 +113,21 @@ export const updateFaculty = (req: Request, res: Response) => {
   }
 
   try {
-    const update = db.prepare(`
+    const query = `
       UPDATE Faculty 
-      SET FirstName = ?, LastName = ?, Email = ?, Designation = ?, DepartmentID = ?, HireDate = ?
-      WHERE FacultyID = ?
-    `);
+      SET FirstName = $1, LastName = $2, Email = $3, Designation = $4, DepartmentID = $5, HireDate = $6
+      WHERE FacultyID = $7
+    `;
     
-    const result = update.run(FirstName, LastName, Email, Designation, DepartmentID, HireDate, id);
+    const result = await pool.query(query, [FirstName, LastName, Email, Designation, DepartmentID, HireDate, id]);
     
-    if (result.changes === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Faculty member not found' });
     }
     
     res.json({ message: 'Faculty member updated successfully' });
   } catch (error: any) {
-    if (error.message.includes('UNIQUE constraint failed: Faculty.Email')) {
+    if (error.code === '23505') {
       return res.status(409).json({ error: 'A faculty member with this email already exists' });
     }
     res.status(500).json({ error: 'Database error', details: error.message });
