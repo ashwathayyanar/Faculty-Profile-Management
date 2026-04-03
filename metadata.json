@@ -1,0 +1,5 @@
+{
+  "name": "Faculty Profile Management System",
+  "description": "A comprehensive full-stack system for managing faculty profiles, research, and publications with relational database integrity.",
+  "requestFramePermissions": []
+}
