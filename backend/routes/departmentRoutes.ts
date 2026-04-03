@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllDepartments, updateDepartment } from '../controllers/departmentController.ts';
+import { getAllDepartments, updateDepartment } from '../controllers/departmentController.js';
 
 const router = express.Router();
 

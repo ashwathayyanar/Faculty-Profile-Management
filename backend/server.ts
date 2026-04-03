@@ -2,10 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import { initDB } from './config/db.ts';
-import facultyRoutes from './routes/facultyRoutes.ts';
-import departmentRoutes from './routes/departmentRoutes.ts';
-import statsRoutes from './routes/statsRoutes.ts';
+import { initDB } from './config/db.js';
+import facultyRoutes from './routes/facultyRoutes.js';
+import departmentRoutes from './routes/departmentRoutes.js';
+import statsRoutes from './routes/statsRoutes.js';
 
 const app = express();
 

@@ -1,4 +1,4 @@
-import pool from '../config/db.ts';
+import pool from '../config/db.js';
 import { Request, Response } from 'express';
 
 export const getGlobalStats = async (req: Request, res: Response) => {
