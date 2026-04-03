@@ -23,6 +23,7 @@ const FacultyRegistration = ({ onBack }) => {
     try {
       const res = await fetch('/api/departments');
       const data = await res.json();
+      console.log('Fetched departments:', data);
       setDepartments(data);
       if (data.length > 0) {
         setFormData(prev => ({ ...prev, DepartmentID: data[0].DepartmentID }));
@@ -168,7 +169,7 @@ const FacultyRegistration = ({ onBack }) => {
                       required
                       value={formData.Designation}
                       onChange={(e) => setFormData({...formData, Designation: e.target.value})}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all appearance-none"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                     >
                       <option value="Professor">Professor</option>
                       <option value="Associate Professor">Associate Professor</option>
@@ -182,8 +183,9 @@ const FacultyRegistration = ({ onBack }) => {
                       required
                       value={formData.DepartmentID}
                       onChange={(e) => setFormData({...formData, DepartmentID: parseInt(e.target.value)})}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all appearance-none"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                     >
+                      <option value="" disabled>Select Department</option>
                       {departments.map(dept => (
                         <option key={dept.DepartmentID} value={dept.DepartmentID}>{dept.DepartmentName}</option>
                       ))}
