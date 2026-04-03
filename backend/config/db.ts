@@ -80,9 +80,12 @@ export const initDB = async () => {
       for (const row of facultyData) {
         await pool.query('INSERT INTO Faculty (FirstName, LastName, Email, Designation, DepartmentID, HireDate) VALUES ($1, $2, $3, $4, $5, $6)', row);
       }
+      return { success: true, message: 'Database initialized and seeded successfully.' };
     }
+    return { success: true, message: 'Database already initialized.' };
   } catch (error) {
     console.error('Database initialization error:', error);
+    throw error;
   }
 };
 

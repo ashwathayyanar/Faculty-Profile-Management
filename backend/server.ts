@@ -7,24 +7,31 @@ import facultyRoutes from './routes/facultyRoutes.ts';
 import departmentRoutes from './routes/departmentRoutes.ts';
 import statsRoutes from './routes/statsRoutes.ts';
 
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// --- API ROUTES ---
+app.use('/api/faculty', facultyRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/stats', statsRoutes);
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'Backend is live', database: 'Connected' });
+});
+
+app.get('/api/init-db', async (req, res) => {
+  try {
+    const result = await initDB();
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ error: 'Failed to initialize database', details: error.message });
+  }
+});
+
 async function startServer() {
-  // Initialize Database
-  await initDB();
-
-  const app = express();
   const PORT = process.env.PORT || 3000;
-
-  app.use(cors());
-  app.use(express.json());
-
-  // --- API ROUTES ---
-  app.use('/api/faculty', facultyRoutes);
-  app.use('/api/departments', departmentRoutes);
-  app.use('/api/stats', statsRoutes);
-
-  app.get('/api/health', (req, res) => {
-    res.json({ status: 'Backend is live', database: 'Connected' });
-  });
 
   // --- VITE MIDDLEWARE ---
   // This serves the frontend in development and production
@@ -47,4 +54,9 @@ async function startServer() {
   });
 }
 
-startServer();
+// Only start the server locally. Vercel will import the app directly.
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export default app;
