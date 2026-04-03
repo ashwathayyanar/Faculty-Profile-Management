@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
 import { initDB } from './config/db.js';
 import facultyRoutes from './routes/facultyRoutes.js';
 import departmentRoutes from './routes/departmentRoutes.js';
@@ -35,7 +34,8 @@ async function startServer() {
 
   // --- VITE MIDDLEWARE ---
   // This serves the frontend in development and production
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
