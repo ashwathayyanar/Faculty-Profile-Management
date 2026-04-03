@@ -41,20 +41,20 @@ const FacultyCard = ({ faculty, onDelete, onEdit }) => {
       <div className="relative z-10">
         <div className="flex justify-between items-start mb-6">
           <div className="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-zinc-200 group-hover:rotate-3 transition-transform">
-            {faculty.FirstName[0]}{faculty.LastName[0]}
+            {faculty.firstname[0]}{faculty.lastname[0]}
           </div>
           <div className="text-right">
             <span className="text-[10px] font-mono bg-zinc-100 text-zinc-500 px-2.5 py-1 rounded-full uppercase tracking-widest border border-zinc-200">
-              {faculty.DepartmentName}
+              {faculty.departmentname}
             </span>
           </div>
         </div>
 
         <div className="mb-6">
           <h3 className="text-xl font-bold text-zinc-900 group-hover:text-zinc-700 transition-colors">
-            {faculty.FirstName} {faculty.LastName}
+            {faculty.firstname} {faculty.lastname}
           </h3>
-          <p className="text-sm font-medium text-zinc-400 uppercase tracking-tighter">{faculty.Designation}</p>
+          <p className="text-sm font-medium text-zinc-400 uppercase tracking-tighter">{faculty.designation}</p>
         </div>
 
         <div className="space-y-3 pt-6 border-t border-zinc-100">
@@ -62,14 +62,14 @@ const FacultyCard = ({ faculty, onDelete, onEdit }) => {
             <div className="p-1.5 bg-zinc-50 rounded-md group-hover/item:bg-zinc-900 group-hover/item:text-white transition-colors">
               <Mail className="w-3.5 h-3.5" />
             </div>
-            <span className="text-xs font-medium truncate">{faculty.Email}</span>
+            <span className="text-xs font-medium truncate">{faculty.email}</span>
           </div>
           
           <div className="flex items-center gap-3 text-zinc-500 group/item">
             <div className="p-1.5 bg-zinc-50 rounded-md group-hover/item:bg-zinc-900 group-hover/item:text-white transition-colors">
               <Calendar className="w-3.5 h-3.5" />
             </div>
-            <span className="text-xs font-medium">Joined {new Date(faculty.HireDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+            <span className="text-xs font-medium">Joined {new Date(faculty.hiredate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
           </div>
         </div>
 

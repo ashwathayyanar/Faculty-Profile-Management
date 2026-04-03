@@ -56,11 +56,11 @@ const Dashboard = ({ forceRefresh }) => {
     if (!facultyToDelete) return;
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/faculty/${facultyToDelete.FacultyID}`, {
+      const res = await fetch(`/api/faculty/${facultyToDelete.facultyid}`, {
         method: 'DELETE'
       });
       if (res.ok) {
-        setFaculty(prev => prev.filter(f => f.FacultyID !== facultyToDelete.FacultyID));
+        setFaculty(prev => prev.filter(f => f.facultyid !== facultyToDelete.facultyid));
         setFacultyToDelete(null);
         fetchGlobalStats(); // Refresh stats after delete
       } else {
@@ -79,13 +79,13 @@ const Dashboard = ({ forceRefresh }) => {
     if (!facultyToEdit) return;
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/faculty/${facultyToEdit.FacultyID}`, {
+      const res = await fetch(`/api/faculty/${facultyToEdit.facultyid}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(facultyToEdit)
       });
       if (res.ok) {
-        setFaculty(prev => prev.map(f => f.FacultyID === facultyToEdit.FacultyID ? facultyToEdit : f));
+        setFaculty(prev => prev.map(f => f.facultyid === facultyToEdit.facultyid ? facultyToEdit : f));
         setFacultyToEdit(null);
         fetchGlobalStats();
       } else {
@@ -111,9 +111,9 @@ const Dashboard = ({ forceRefresh }) => {
   };
 
   const filteredFaculty = faculty.filter(f => {
-    const fullName = `${f.FirstName} ${f.LastName}`.toLowerCase();
+    const fullName = `${f.firstname} ${f.lastname}`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase()) || 
-           f.Email.toLowerCase().includes(searchTerm.toLowerCase());
+           f.email.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   return (
@@ -185,7 +185,7 @@ const Dashboard = ({ forceRefresh }) => {
           <AnimatePresence mode="popLayout">
             {filteredFaculty.map((f) => (
               <FacultyCard 
-                key={f.FacultyID} 
+                key={f.facultyid} 
                 faculty={f} 
                 onDelete={(faculty) => setFacultyToDelete(faculty)}
                 onEdit={(faculty) => setFacultyToEdit(faculty)}
@@ -231,8 +231,8 @@ const Dashboard = ({ forceRefresh }) => {
                     <input 
                       type="text" 
                       required
-                      value={facultyToEdit.FirstName}
-                      onChange={(e) => setFacultyToEdit({...facultyToEdit, FirstName: e.target.value})}
+                      value={facultyToEdit.firstname}
+                      onChange={(e) => setFacultyToEdit({...facultyToEdit, firstname: e.target.value})}
                       className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                     />
                   </div>
@@ -241,8 +241,8 @@ const Dashboard = ({ forceRefresh }) => {
                     <input 
                       type="text" 
                       required
-                      value={facultyToEdit.LastName}
-                      onChange={(e) => setFacultyToEdit({...facultyToEdit, LastName: e.target.value})}
+                      value={facultyToEdit.lastname}
+                      onChange={(e) => setFacultyToEdit({...facultyToEdit, lastname: e.target.value})}
                       className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                     />
                   </div>
@@ -253,8 +253,8 @@ const Dashboard = ({ forceRefresh }) => {
                   <input 
                     type="email" 
                     required
-                    value={facultyToEdit.Email}
-                    onChange={(e) => setFacultyToEdit({...facultyToEdit, Email: e.target.value})}
+                    value={facultyToEdit.email}
+                    onChange={(e) => setFacultyToEdit({...facultyToEdit, email: e.target.value})}
                     className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                   />
                 </div>
@@ -264,8 +264,8 @@ const Dashboard = ({ forceRefresh }) => {
                     <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Designation</label>
                     <select 
                       required
-                      value={facultyToEdit.Designation}
-                      onChange={(e) => setFacultyToEdit({...facultyToEdit, Designation: e.target.value})}
+                      value={facultyToEdit.designation}
+                      onChange={(e) => setFacultyToEdit({...facultyToEdit, designation: e.target.value})}
                       className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all appearance-none"
                     >
                       <option value="Professor">Professor</option>
@@ -278,12 +278,12 @@ const Dashboard = ({ forceRefresh }) => {
                     <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Department</label>
                     <select 
                       required
-                      value={facultyToEdit.DepartmentID}
-                      onChange={(e) => setFacultyToEdit({...facultyToEdit, DepartmentID: parseInt(e.target.value)})}
+                      value={facultyToEdit.departmentid}
+                      onChange={(e) => setFacultyToEdit({...facultyToEdit, departmentid: parseInt(e.target.value)})}
                       className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all appearance-none"
                     >
                       {departments.map(dept => (
-                        <option key={dept.DepartmentID} value={dept.DepartmentID}>{dept.DepartmentName}</option>
+                        <option key={dept.departmentid} value={dept.departmentid}>{dept.departmentname}</option>
                       ))}
                     </select>
                   </div>
@@ -294,8 +294,8 @@ const Dashboard = ({ forceRefresh }) => {
                   <input 
                     type="date" 
                     required
-                    value={facultyToEdit.HireDate}
-                    onChange={(e) => setFacultyToEdit({...facultyToEdit, HireDate: e.target.value})}
+                    value={facultyToEdit.hiredate ? new Date(facultyToEdit.hiredate).toISOString().split('T')[0] : ''}
+                    onChange={(e) => setFacultyToEdit({...facultyToEdit, hiredate: e.target.value})}
                     className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                   />
                 </div>
@@ -345,7 +345,7 @@ const Dashboard = ({ forceRefresh }) => {
               </div>
               <h3 className="text-xl font-bold text-zinc-900 mb-2">Confirm Deletion</h3>
               <p className="text-zinc-500 text-sm leading-relaxed mb-8">
-                Are you sure you want to remove <span className="font-bold text-zinc-900">{facultyToDelete.FirstName} {facultyToDelete.LastName}</span> from the system? This action cannot be undone.
+                Are you sure you want to remove <span className="font-bold text-zinc-900">{facultyToDelete.firstname} {facultyToDelete.lastname}</span> from the system? This action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <button 

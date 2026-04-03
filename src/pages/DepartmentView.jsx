@@ -29,13 +29,13 @@ const DepartmentView = ({ onBack }) => {
     e.preventDefault();
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/departments/${editingDept.DepartmentID}`, {
+      const res = await fetch(`/api/departments/${editingDept.departmentid}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ HeadOfDepartment: editingDept.HeadOfDepartment })
+        body: JSON.stringify({ HeadOfDepartment: editingDept.headofdepartment })
       });
       if (res.ok) {
-        setStats(prev => prev.map(d => d.DepartmentID === editingDept.DepartmentID ? editingDept : d));
+        setStats(prev => prev.map(d => d.departmentid === editingDept.departmentid ? editingDept : d));
         setEditingDept(null);
       } else {
         alert('Failed to update department head');
@@ -77,7 +77,7 @@ const DepartmentView = ({ onBack }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {stats.map((dept, i) => (
           <motion.div
-            key={dept.DepartmentID}
+            key={dept.departmentid}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
@@ -99,7 +99,7 @@ const DepartmentView = ({ onBack }) => {
               </div>
 
               <h3 className="text-xl font-bold text-zinc-900 mb-6 leading-tight min-h-[3.5rem]">
-                {dept.DepartmentName}
+                {dept.departmentname}
               </h3>
 
               <div className="space-y-6">
@@ -108,14 +108,14 @@ const DepartmentView = ({ onBack }) => {
                     <Users className="w-4 h-4 text-zinc-400" />
                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Faculty</span>
                   </div>
-                  <span className="text-xl font-bold text-zinc-900">{dept.facultyCount}</span>
+                  <span className="text-xl font-bold text-zinc-900">{dept.facultycount}</span>
                 </div>
 
                 <div className="pt-6 border-t border-zinc-100">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Head of Department</p>
                   <p className="text-sm font-medium text-zinc-900 flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-blue-500" />
-                    {dept.HeadOfDepartment}
+                    {dept.headofdepartment}
                   </p>
                 </div>
               </div>
@@ -151,7 +151,7 @@ const DepartmentView = ({ onBack }) => {
               </div>
               
               <h3 className="text-2xl font-bold text-zinc-900 mb-2">Update Leadership</h3>
-              <p className="text-zinc-500 text-sm mb-8">Modify the Head of Department for {editingDept.DepartmentName}.</p>
+              <p className="text-zinc-500 text-sm mb-8">Modify the Head of Department for {editingDept.departmentname}.</p>
 
               <form onSubmit={handleUpdateHead} className="space-y-6">
                 <div className="space-y-2">
@@ -159,8 +159,8 @@ const DepartmentView = ({ onBack }) => {
                   <input 
                     type="text" 
                     required
-                    value={editingDept.HeadOfDepartment}
-                    onChange={(e) => setEditingDept({...editingDept, HeadOfDepartment: e.target.value})}
+                    value={editingDept.headofdepartment}
+                    onChange={(e) => setEditingDept({...editingDept, headofdepartment: e.target.value})}
                     className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                   />
                 </div>

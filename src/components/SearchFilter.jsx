@@ -43,8 +43,8 @@ const SearchFilter = ({
         >
           <option value="">All Academic Units</option>
           {departments.map(dept => (
-            <option key={dept.DepartmentID} value={dept.DepartmentID?.toString() || ''}>
-              {dept.DepartmentName}
+            <option key={dept.departmentid} value={dept.departmentid?.toString() || ''}>
+              {dept.departmentname}
             </option>
           ))}
         </select>

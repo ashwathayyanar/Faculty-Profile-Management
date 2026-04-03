@@ -26,7 +26,7 @@ const FacultyRegistration = ({ onBack }) => {
       console.log('Fetched departments:', data);
       setDepartments(data);
       if (data.length > 0) {
-        setFormData(prev => ({ ...prev, DepartmentID: data[0].DepartmentID }));
+        setFormData(prev => ({ ...prev, DepartmentID: data[0].departmentid }));
       }
     } catch (error) {
       console.error('Error fetching departments:', error);
@@ -187,7 +187,7 @@ const FacultyRegistration = ({ onBack }) => {
                     >
                       <option value="" disabled>Select Department</option>
                       {departments.map(dept => (
-                        <option key={dept.DepartmentID} value={dept.DepartmentID}>{dept.DepartmentName}</option>
+                        <option key={dept.departmentid} value={dept.departmentid}>{dept.departmentname}</option>
                       ))}
                     </select>
                   </div>
